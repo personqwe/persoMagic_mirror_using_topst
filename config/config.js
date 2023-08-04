@@ -36,12 +36,8 @@ let config = {
 	timeFormat: "HH:mm:ss", // 한국 시간 형식 (24시간 표기)
 	timezone: "Asia/Seoul", // 한국 시간대
 	units: "metric",
-	electronOptions: {
-		args: ["--disable-gpu"],
-		// 기타 Electron 옵션들을 추가할 수 있습니다.
-	  },
 
-	  modules: [
+    modules: [
 		{
 			module: "alert",
 		},
@@ -49,22 +45,26 @@ let config = {
 			module: "updatenotification",
 			position: "top_bar"
 		},
-		{
-			module: "clock",
-			position: "top_left"
-		},
-		{
-			module: "weather",
-			position: "top_left",
-			header: "Weather Forecast",
-			config: {
-				weatherProvider: "openweathermap",
-				type: "forecast",
-				location: "Daegu",
-				locationID: "1835329", //ID from http://bulk.openweathermap.org/sample/city.list.json.gz; unzip the gz file and find your city
-				apiKey: "########################"
-			}
-		},
+        {
+            module: "clock",
+            position: "top_left",
+            config: {
+                timeFormat: "HH:mm:ss", // 한국 시간 형식 (24시간 표기)
+                timezone: "Asia/Seoul" // 한국 시간대
+            }
+        },
+        {
+            module: "MMM-OpenmapWeather",
+            position: "top_left",	// This can be any of the regions. Best results in left or right regions.
+            header: "Current Weather", //Location is the default value if header is empty or not defined.
+            config: {
+                // See 'Configuration options' for more information.
+                location: "Daegu",
+                locationID: "1835327",
+                appid: "58de508ffcc87abd7b783e10bdf8a73d",  //openweathermap.org API key
+                      colorIcon: true
+            }
+        },
 		{
 			module: "newsfeed",
 			position: "top_bar",
@@ -86,7 +86,7 @@ let config = {
 			position: 'top_left',
 			header: 'Air Quality Index (AQI)',
 			config: {
-				token: "#################################",
+				token: "e6c6484d8b3241aef4709fc637df908261c68ef4",
 				city: "Daegu",
 				iaqi: false,
 				updateInterval: 30 * 60 * 1000, // Every half hour.
@@ -95,12 +95,12 @@ let config = {
 				debug: false
 			}
 		},
-		{
+           {
 			module: 'MMM-GmailFeed',
 			position: 'top_left',
 			config: {
 				username: 'dlrudfhr55@gmail.com',
-				password: '###################',
+				password: 'jxqaxonirqjcdpgb',
 				updateInterval: 60000,
 				maxEmails: 5,
 				maxSubjectLength: 10,
@@ -111,38 +111,123 @@ let config = {
 			}
 		},
 		{
-			module: "calendar",
-			header: "KR Holidays",
-			position: "top_left",
-			config: {
-				calendars: [
+            module: "MMM-CalendarWeek",
+            position: "bottom_right", // 원하는 위치로 변경 가능합니다.
+            config: {
+                maximumEntries: 7, // 표시할 일정 항목 수, 한 주에 7개의 항목이 표시됩니다.
+                displayLocation: false, // 위치 정보 표시 여부
+                showEnd: true, // 일정의 종료 시간 표시 여부
+                fade: true, // 일정이 표시될 때 페이드 효과 사용 여부
+                colored: true, // 일정에 색상 적용 여부
+                dateFormat: "YYYY-MM-DD", // 날짜 형식
+				updateInterval: 10000, // 예: 10분마다 갱신
+                filterDaysBefore: 0, // 현재 날짜 이전의 일정은 표시하지 않도록 설정합니다. 0으로 설정하면 오늘 이전의 일정은 표시하지 않습니다.
+                calendars: [
+                    {
+                        url: "https://calendar.google.com/calendar/ical/dlrudfhr55%40gmail.com/private-a2878fc31b7956fd3d85535b43ece377/basic.ics", // 당신의 달력 URL 입력
+                        color: "#FFFFFF" // 원하는 색상 설정
+                    },
 					{
-						symbol: "calendar",
-						url: "###############################################"
-					}
-				]
-			}
-		},
-		{
-			module: "MMM-CalendarExt3",
-			position: "bottom_bar",
-			title: "달력",
+                        url: "https://calendar.google.com/calendar/embed?src=addressbook%23contacts%40group.v.calendar.google.com&ctz=Asia%2FSeoul", // 당신의 달력 URL 입력
+                        color: "#FFFFFF" // 원하는 색상 설정
+                    },
+					{
+                        url: "https://calendar.google.com/calendar/ical/ko.south_korea%23holiday%40group.v.calendar.google.com/public/basic.ics", // 당신의 달력 URL 입력
+                        color: "#FF0000" // 원하는 색상 설정
+                    },
+                ]
+            }
+        },
+        {
+            module: "MMM-GooglePhotos",
+            position: "fullscreen_below",
+            config: {
+                  albums: ["image"], // Set your album name. like ["My wedding", "family share", "Travle to Paris"]
+                  updateInterval: 1000 * 60 * 30, // minimum 30 seconds.
+                  sort: "random", // "old", "random"
+                  uploadAlbum: null, // Only album created by `create_uploadable_album.js`.
+                  condition: {
+                      fromDate: null, // Or "2018-03", RFC ... format available
+                      toDate: null, // Or "2019-12-25",
+                      minWidth: null, // Or 400
+                      maxWidth: null, // Or 8000
+                      minHeight: null, // Or 400
+                      maxHeight: null, // Or 8000
+                      minWHRatio: null,
+                      maxWHRatio: null,
+                      // WHRatio = Width/Height ratio ( ==1 : Squared Photo,   < 1 : Portraited Photo, > 1 : Landscaped Photo)
+                  },
+                  showWidth: 1080, // These values will be used for quality of downloaded photos to show. real size to show in your MagicMirror region is recommended.
+                  showHeight: 2560,
+                  timeFormat: "YYYY/MM/DD HH:mm", // Or `relative` can be used.
+            }
+          },
+		  {
+			module: "MMM-Modulebar",
+			position: "top_right",
 			config: {
-			  mode: "month",
-			  instanceId: "basicCalendar",
-			  locale: 'ko-KR',
-			  maxEventLines: 5,
-			  firstDayOfWeek: 1,
-			  calendars: [
-				{
-				  url: "#######################################################",
-				  name: "us_holiday", // <= RECOMMENDED to assign name
-				  color: "red", // <= RECOMMENDED to assign color
-				},
-			],
-			}
+				buttons: {
+					// A number (unique for each button) lowest number will be displayed first...
+					"1": {
+					  // This button hides everything and uses two symbols.
+					  module: "clock",
+					  text: "Clock On",
+					  text2: "Clock Off",
+					  symbol: "toggle-on",
+					  symbol2: "toggle-off",
+					},
+					"2": {
+						// This button hides everything and uses two symbols.
+						module: "MMM-OpenmapWeather",
+						text: "Weather On",
+						text2: "Weather Off",
+						symbol: "toggle-on",
+						symbol2: "toggle-off",
+					  },
+					  "3": {
+						// This button hides everything and uses two symbols.
+						module: "newsfeed",
+						text: "Newsfeed On",
+						text2: "Newsfeed Off",
+						symbol: "toggle-on",
+						symbol2: "toggle-off",
+					  },
+					  "4": {
+						// This button hides everything and uses two symbols.
+						module: "MMM-AQI",
+						text: "AQI On",
+						text2: "AQI Off",
+						symbol: "toggle-on",
+						symbol2: "toggle-off",
+					  },
+					  "5": {
+						// This button hides everything and uses two symbols.
+						module: "MMM-GmailFeed",
+						text: "GmailFeed On",
+						text2: "GmailFeed Off",
+						symbol: "toggle-on",
+						symbol2: "toggle-off",
+					  },
+					  "6": {
+						// This button hides everything and uses two symbols.
+						module: "MMM-CalendarWeek",
+						text: "CalendarWeek On",
+						text2: "CalendarWeek Off",
+						symbol: "toggle-on",
+						symbol2: "toggle-off",
+					  },
+					  "7": {
+						module: "MMM-GooglePhotos",
+						text: "GooglePhotos On",
+						text2: "GooglePhotos Off",
+						symbol: "toggle-on",
+						symbol2: "toggle-off",
+					  }
+				  }
+			},
 		  },
-	]
+		]
 };
+
 /*************** DO NOT EDIT THE LINE BELOW ***************/
 if (typeof module !== "undefined") {module.exports = config;}

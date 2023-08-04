@@ -1,7 +1,6 @@
 .clock-grid {
   display: inline-flex;
   gap: 15px;
-  margin-top: 60px; /* 이 값을 조정하여 위로 올립니다. */
 }
 
 .clock-grid-left {
@@ -79,7 +78,7 @@
   left: 50%;
   margin: -38% -1px 0 0; /* numbers must match negative length & thickness */
   padding: 38% 1px 0 0; /* indicator length & thickness */
-  background: var(--color-text);
+  background: var(--color-text-bright);
   transform-origin: 50% 100%;
 }
 
